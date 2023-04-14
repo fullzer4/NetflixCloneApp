@@ -1,15 +1,14 @@
-use actix_web::{get, HttpServer, App, HttpResponse, Responder};
+use actix_web::{ HttpServer, App };
 
-#[get("/")]
-async fn greet() -> impl Responder {
-    HttpResponse::Ok().body("See the docs to see how to consume!")
-}
+mod method;
+use method::{greet, login};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(greet)
+            .service(login)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
