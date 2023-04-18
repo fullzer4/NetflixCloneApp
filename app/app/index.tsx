@@ -13,16 +13,16 @@ const App = () => {
       <StatusBar/>
       {/* Navbar */}
       <View style={styles.Navbar}>
-        <Image source={{
-          style={styles.Logo},
-          uri: '../assets/Netflix.png',
-        }}></Image>
-        <View>
+        <Image style={styles.Logo} source={require(
+          '../assets/Netflix.png',
+        )}></Image>
+        <View style={styles.NavbarText}>
           <Text 
+            style={styles.NavbarLinks}
             onPress={() => { 
               Linking.openURL('https://github.com/fullzer4/NetflixCloneApp'); 
             }}>GITHUB</Text> 
-          <Link href="/login">ENTRAR</Link>
+          <Link style={styles.NavbarLinks} href="/login">ENTRAR</Link>
         </View>
       </View>
 
@@ -79,10 +79,23 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    padding: 5,
+    marginTop: 5,
   },
   Logo: {
-
+    height: 45,
+    width: 90,
+  },
+  NavbarText: {
+    display:"flex",
+    flexDirection: "row",
+    gap: 20,
+  },
+  NavbarLinks: {
+    color: '#eee',
+    fontSize: 15,
+    letterSpacing: 0.5,
   }
 });
 
