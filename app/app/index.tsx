@@ -1,11 +1,26 @@
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Button, Linking, Pressable, StyleSheet, Text, View, Image } from 'react-native';
+import { useRef, useState } from 'react';
+import { Button, Linking, Pressable, StyleSheet, Text, View, Image, Animated, TextInput } from 'react-native';
 
 const App = () => {
 
+  const bottomPosition = new Animated.Value(-1000);
+
   const openSignup = () => {
-    alert("signup")
+    Animated.timing(bottomPosition, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  }
+
+  const closeSignup = () => {
+    Animated.timing(bottomPosition, {
+      toValue: -1000,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
   }
 
   return (
@@ -28,16 +43,34 @@ const App = () => {
 
       {/* Card */}
       <View style={styles.card}>
-        <Text>Bem vindo ao meu Clone do app da netflix</Text>
+        <Image style={styles.CardImage} source={require(
+          '../assets/Anime.webp',
+        )}></Image>
       </View>
 
       {/* Botao */}
       <Pressable style={styles.button} onPress={() => openSignup()}>
         <Text style={styles.buttonText}>VAMOS LÁ</Text>
       </Pressable>
+
+      {/* PopUp Signup */}
+      <Animated.View style={[styles.Popup, { bottom: bottomPosition }]}>
+        <Pressable style={styles.Close} onPress={() => closeSignup()}>
+          <Image style={styles.ClosePop} source={require(
+            '../assets/close2.png',
+          )}></Image>
+        </Pressable>
+        <View style={styles.FormPopup}>
+          <Text style={styles.FormTitulo}>Tudo pronto para assistir?</Text>
+          <Text style={styles.FormDescricao}>Informe seu email para criar ou acessar sua conta.</Text>
+          <TextInput/>
+          <Pressable style={styles.button} onPress={() => closeSignup()}>
+            <Text style={styles.buttonText}>VAMOS LÁ</Text>
+          </Pressable>
+        </View>
+      </Animated.View>
     </View>
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -46,7 +79,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#141414',
     alignItems: 'center',
     justifyContent: "space-between",
-    padding: 10,
     paddingBottom: 25,
   },
   button: {
@@ -80,8 +112,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 5,
-    marginTop: 5,
+    padding: 20,
+    marginTop: 15,
   },
   Logo: {
     height: 45,
@@ -96,6 +128,55 @@ const styles = StyleSheet.create({
     color: '#eee',
     fontSize: 15,
     letterSpacing: 0.5,
+  },
+  CardImage:{
+    height: 450,
+    width: 300,
+    borderRadius: 15,
+    marginTop: 10,
+  },
+  Popup:{
+    position: 'absolute',
+    backgroundColor: '#ffffff',
+    width: "100%",
+    height: "100%",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  Close:{
+    marginTop: 40,
+    margin: 30,
+    alignItems: "flex-end",
+  },
+  ClosePop:{
+    height: 20,
+    width: 20,
+  },
+  FormPopup: {
+    marginTop: 25,
+    display: "flex",
+    width:"100%",
+    height: "100%",
+    alignItems: "center",
+    gap: 20,
+    paddingLeft: 25,
+    paddingRight: 25,
+  },
+  FormTitulo: {
+    color: '#000000',
+    fontSize: 28,
+    letterSpacing: 0.5,
+    fontWeight: "500",
+    textAlign: "center",
+    paddingLeft: 40,
+    paddingRight: 40,
+  },
+  FormDescricao: {
+    color: '#000000',
+    fontSize: 15,
+    letterSpacing: 0.5,
+    fontWeight: "400",
+    textAlign: "center",
   }
 });
 
