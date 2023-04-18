@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
-    marginTop: 15,
+    marginTop: 20,
   },
   Logo: {
     height: 45,
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     height: 450,
     width: 300,
     borderRadius: 15,
-    marginTop: 10,
   },
   Popup:{
     position: 'absolute',
