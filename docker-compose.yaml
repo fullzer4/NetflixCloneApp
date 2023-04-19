@@ -2,6 +2,16 @@ version: '3'
 
 services:
 
+  backend:  
+    container_name: backend
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - postgres-compose-network
   postgresqldb:
     image: postgres
     ports:
