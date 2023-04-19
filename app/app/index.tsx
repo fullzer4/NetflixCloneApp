@@ -1,9 +1,10 @@
-import { Link } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useRef, useState } from 'react';
-import { Button, Linking, Pressable, StyleSheet, Text, View, Image, Animated, TextInput } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {Linking, Pressable, StyleSheet, Text, View, Image, Animated, TextInput } from 'react-native';
 
 const App = () => {
+  const [placeholder, setPlaceholder] = useState('Email');
+  const [email, setEmail] = useState("");
 
   const bottomPosition = new Animated.Value(-1000);
 
@@ -23,9 +24,14 @@ const App = () => {
     }).start();
   }
 
+  const router = useRouter();
+
+  const sendSignin = () => {
+    router.push("/login")
+  }
+
   return (
     <View style={styles.container}>
-      <StatusBar/>
       {/* Navbar */}
       <View style={styles.Navbar}>
         <Image style={styles.Logo} source={require(
@@ -37,7 +43,9 @@ const App = () => {
             onPress={() => { 
               Linking.openURL('https://github.com/fullzer4/NetflixCloneApp'); 
             }}>GITHUB</Text> 
-          <Link style={styles.NavbarLinks} href="/login">ENTRAR</Link>
+          <Pressable onPress={() => sendSignin()}>
+            <Text style={styles.NavbarLinks} >ENTRAR</Text>
+          </Pressable>
         </View>
       </View>
 
@@ -63,8 +71,16 @@ const App = () => {
         <View style={styles.FormPopup}>
           <Text style={styles.FormTitulo}>Tudo pronto para assistir?</Text>
           <Text style={styles.FormDescricao}>Informe seu email para criar ou acessar sua conta.</Text>
-          <TextInput/>
-          <Pressable style={styles.button} onPress={() => closeSignup()}>
+          <TextInput 
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email"
+            placeholderTextColor="#8e8e93"
+            style={styles.input}
+            onFocus={() => setPlaceholder("")}
+            onBlur={() => setPlaceholder("Email")}
+          />
+          <Pressable style={styles.button} onPress={() => sendSignin()}>
             <Text style={styles.buttonText}>VAMOS LÁ</Text>
           </Pressable>
         </View>
@@ -76,7 +92,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#141414',
+    backgroundColor: '#050505',
     alignItems: 'center',
     justifyContent: "space-between",
     paddingBottom: 25,
@@ -114,6 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     marginTop: 20,
+    zIndex: 1,
   },
   Logo: {
     height: 45,
@@ -127,7 +144,7 @@ const styles = StyleSheet.create({
   NavbarLinks: {
     color: '#eee',
     fontSize: 15,
-    letterSpacing: 0.5,
+    letterSpacing: 0.5
   },
   CardImage:{
     height: 450,
@@ -141,6 +158,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    zIndex: 10,
   },
   Close:{
     marginTop: 40,
@@ -176,7 +194,18 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontWeight: "400",
     textAlign: "center",
-  }
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    fontSize: 16,
+    color: "black",
+    marginBottom: 20,
+    width: "90%"
+  },
 });
 
 export default App
