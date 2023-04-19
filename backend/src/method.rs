@@ -1,29 +1,35 @@
 use actix_web::{get, post, HttpResponse, Responder, web, error};
 use serde::Deserialize;
 use sqlx::{postgres::PgPool, Pool, Postgres};
+use bcrypt::{verify,hash};
 
 async fn create_table(pool: &PgPool) -> Result<(), sqlx::Error> {
     sqlx::query(
-    "CREATE TABLE IF NOT EXISTS usuario (
+        "CREATE TABLE IF NOT EXISTS usuario (
             id SERIAL PRIMARY KEY,
             username TEXT NOT NULL,
-            email TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL
         )"
     )
     .execute(pool)
     .await?;
 
-    Ok(())
-}
+    let password = "DemoDemo";
+    let hashed_password = hash(password, 10).unwrap();
 
-async fn connection() -> PgPool {
-    let database_url:&str = "postgres://postgres:123456@localhost/netflix";
-    let pool: Pool<Postgres> = PgPool::connect(database_url).await.unwrap();
-    
-    create_table(&pool).await.unwrap();
-    
-    pool
+    sqlx::query!(
+        "INSERT INTO usuario (username, email, password)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (email) DO UPDATE SET username = excluded.username",
+        "demo",
+        "Demo@gmail.com",
+        hashed_password,
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(())
 }
 
 #[derive(sqlx::FromRow, serde::Serialize)]
@@ -45,21 +51,47 @@ pub struct LoginInfo {
     password: String,
 }
 
+async fn create_pool() -> PgPool {
+    let database_url = "postgres://postgres:123456@localhost/netflix";
+    let pool = PgPool::connect(database_url).await.unwrap();
+
+    create_table(&pool).await.unwrap();
+
+    pool
+}
+
 #[post("/login")]
 pub async fn login(info: web::Json<LoginInfo>) -> Result<HttpResponse, actix_web::Error> {
+    let pool = create_pool().await;
 
-    let email: Option<String> = Some(info.email.clone());
-    let password: Option<String> = Some(info.password.clone());
+    let email = info.email.clone();
+    let password = info.password.clone();
 
-    let _pool: Pool<Postgres> = connection().await;
-
-    println!("Conectado");
-
-    if email.is_none() || password.is_none() {
+    if email.is_empty() || password.is_empty() {
         return Err(error::ErrorBadRequest("verify all the request"));
     }
 
-    Ok(HttpResponse::Ok().json(email))
+    let user = match sqlx::query_as::<_, User>(
+        "SELECT * FROM usuario WHERE email = $1"
+    )
+    .bind(&email)
+    .fetch_optional(&pool)
+    .await {
+        Ok(user) => user,
+        Err(e) => {
+            return Err(actix_web::error::ErrorInternalServerError(e));
+        }
+    };
+
+    if let Some(user) = user {
+        if verify(&password, &user.password).unwrap_or(false) {
+            Ok(HttpResponse::Ok().json(user))
+        } else {
+            Err(error::ErrorUnauthorized("invalid email or password"))
+        }
+    } else {
+        Err(error::ErrorNotFound("user with email not found"))
+    }
 }
 
 #[derive(Deserialize, Clone)]
@@ -72,15 +104,43 @@ pub struct SignUpInfo {
 #[post("/signup")]
 pub async fn signup(info: web::Json<SignUpInfo>) -> Result<HttpResponse, actix_web::Error> {
 
-    let username: Option<String> = Some(info.username.clone());
-    let email: Option<String> = Some(info.email.clone());
-    let password: Option<String> = Some(info.password.clone());
+    let username = info.username.clone();
+    let email = info.email.clone();
+    let password = info.password.clone();
 
-    let _pool: Pool<Postgres> = connection().await;
-
-    if username.is_none() || email.is_none() || password.is_none() {
+    if username.is_empty() || email.is_empty() || password.is_empty() {
         return Err(error::ErrorBadRequest("verify all the request"));
     }
 
-    Ok(HttpResponse::Ok().json(email))
+    let pool = create_pool().await;
+
+    let user = match sqlx::query_as::<_, User>(
+        "SELECT * FROM usuario WHERE email = $1"
+    )
+    .bind(&email)
+    .fetch_optional(&pool)
+    .await {
+        Ok(user) => user,
+        Err(e) => {
+            return Err(actix_web::error::ErrorInternalServerError(e));
+        }
+    };
+
+    if user.is_some() {
+        return Err(error::ErrorConflict("user with email already exists"));
+    }
+
+    let hashed_password = hash(&password, 10).unwrap();
+
+    match sqlx::query!(
+        "INSERT INTO usuario (username, email, password) VALUES ($1, $2, $3)",
+        &username,
+        &email,
+        hashed_password,
+    )
+    .execute(&pool)
+    .await {
+        Ok(_) => Ok(HttpResponse::Ok().finish()),
+        Err(e) => Err(actix_web::error::ErrorInternalServerError(e)),
+    }
 }
