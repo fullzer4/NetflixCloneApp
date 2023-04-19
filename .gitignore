@@ -18,3 +18,4 @@ web-build/
 
 target
 cargo.lock
+.env

@@ -1,13 +1,6 @@
-services:
+version: '3'
 
-  backend:  
-    container_name: backend
-    image: backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+services:
 
   postgresqldb:
     image: postgres
@@ -16,4 +9,19 @@ services:
     environment:
       - POSTGRES_PASSWORD=123456
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=taskdb
+      - POSTGRES_DB=netflix
+    networks:
+      - postgres-compose-network
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "gabrielpelizzaro@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    ports:
+      - "16543:80"
+    networks:
+      - postgres-compose-network
+
+networks: 
+  postgres-compose-network:
+    driver: bridge
