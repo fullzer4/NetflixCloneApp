@@ -144,3 +144,27 @@ pub async fn signup(info: web::Json<SignUpInfo>) -> Result<HttpResponse, actix_w
         Err(e) => Err(actix_web::error::ErrorInternalServerError(e)),
     }
 }
+
+async fn verify_user(email: &str, pool: &PgPool) -> Result<bool, sqlx::Error> {
+    let user = sqlx::query_as::<_, User>(
+        "SELECT * FROM usuario WHERE email = $1"
+    )
+    .bind(email)
+    .fetch_optional(pool)
+    .await?;
+
+    Ok(user.is_some())
+}
+
+#[get("/verifyuser/{email}")]
+pub async fn verifyuser(path: web::Path<(String,)>) -> Result<HttpResponse, actix_web::Error> {
+    let email = &path.0;
+
+    let pool = create_pool().await;
+
+    if let Some(exists) = verify_user(&email, &pool).await.ok() {
+        Ok(HttpResponse::Ok().json(exists))
+    } else {
+        Err(actix_web::error::ErrorInternalServerError("Error checking user existence"))
+    }
+}

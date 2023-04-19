@@ -1,7 +1,7 @@
 use actix_web::{ HttpServer, App };
 
 mod method;
-use method::{greet, login, signup};
+use method::{greet, login, signup, verifyuser};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -13,6 +13,7 @@ async fn main() -> std::io::Result<()> {
             .service(greet)
             .service(login)
             .service(signup)
+            .service(verifyuser)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
