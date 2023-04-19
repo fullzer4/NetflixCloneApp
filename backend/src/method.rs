@@ -1,6 +1,6 @@
 use actix_web::{get, post, HttpResponse, Responder, web, error};
 use serde::Deserialize;
-use sqlx::{postgres::PgPool, Pool, Postgres};
+use sqlx::{postgres::PgPool};
 use bcrypt::{verify,hash};
 
 async fn create_table(pool: &PgPool) -> Result<(), sqlx::Error> {
