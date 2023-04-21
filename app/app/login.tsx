@@ -13,6 +13,31 @@ const Login = () => {
     router.push("/")
   }
 
+  const sendSignup = () => {
+    router.push("/signup")
+  }
+
+  const sendLogin = async () => {
+    const response = await fetch('https://10.0.2.2:8080/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    });
+
+    if (response.ok) {
+      console.log("feito")
+      router.push("/dashboard")
+    } else {
+      console.log("erro")
+      return await response.text();
+    }
+  }
+
   return (
     <View style={styles.container}>
       {/* Navbar */}
@@ -43,11 +68,11 @@ const Login = () => {
           placeholderTextColor="#8e8e93"
           style={styles.input}
         />
-        <Pressable style={styles.login}>
+        <Pressable style={styles.login} onPress={() => sendLogin()}>
           <Text style={styles.loginText}>Entrar</Text>
         </Pressable>
 
-        <Pressable style={styles.signup} onPress={() => router.push("/signup")}>
+        <Pressable style={styles.signup} onPress={() => sendSignup()}>
           <Text style={styles.signupText}>Novo por aqui? Inscreva-se agora.</Text>
         </Pressable>
       </View>
