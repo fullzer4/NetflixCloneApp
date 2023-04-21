@@ -3,7 +3,6 @@ import { useState } from 'react';
 import {Linking, Pressable, StyleSheet, Text, View, Image, Animated, TextInput } from 'react-native';
 
 const App = () => {
-  const [placeholder, setPlaceholder] = useState('Email');
   const [email, setEmail] = useState("");
 
   const bottomPosition = new Animated.Value(-1000);
@@ -26,9 +25,20 @@ const App = () => {
 
   const router = useRouter();
 
-  const sendSignin = () => {
-    router.push("/login")
-  }
+  const sendSignin = async (email) => {
+    try {
+      const response = await fetch(`http://10.0.2.2:8080/verifyuser/${email}`);
+      const data = await response.json();
+  
+      if (data) {
+        router.push('/login');
+      } else {
+        router.push('/signup');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -43,7 +53,7 @@ const App = () => {
             onPress={() => { 
               Linking.openURL('https://github.com/fullzer4/NetflixCloneApp'); 
             }}>GITHUB</Text> 
-          <Pressable onPress={() => sendSignin()}>
+          <Pressable onPress={() => router.push('/login')}>
             <Text style={styles.NavbarLinks} >ENTRAR</Text>
           </Pressable>
         </View>
@@ -77,10 +87,8 @@ const App = () => {
             placeholder="Email"
             placeholderTextColor="#8e8e93"
             style={styles.input}
-            onFocus={() => setPlaceholder("")}
-            onBlur={() => setPlaceholder("Email")}
           />
-          <Pressable style={styles.button} onPress={() => sendSignin()}>
+          <Pressable style={styles.button} onPress={() => sendSignin(email)}>
             <Text style={styles.buttonText}>VAMOS LÁ</Text>
           </Pressable>
         </View>

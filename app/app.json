@@ -5,6 +5,8 @@
       "bundler": "metro"
     },
     "name": "app",
-    "slug": "app"
+    "slug": "app",
+    "hostType": "lan"
+
   }
 }

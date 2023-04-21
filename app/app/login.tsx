@@ -47,7 +47,7 @@ const Login = () => {
           <Text style={styles.loginText}>Entrar</Text>
         </Pressable>
 
-        <Pressable style={styles.signup}>
+        <Pressable style={styles.signup} onPress={() => router.push("/signup")}>
           <Text style={styles.signupText}>Novo por aqui? Inscreva-se agora.</Text>
         </Pressable>
       </View>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     width: "90%",
     paddingVertical: 10,
     borderRadius: 12,
-    marginTop: 10
+    marginTop: 10,
   }
 });
 

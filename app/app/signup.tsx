@@ -32,6 +32,13 @@ const Signup = () => {
         <TextInput 
           value={email}
           onChangeText={setEmail}
+          placeholder="Username"
+          placeholderTextColor="#8e8e93"
+          style={styles.input}
+        />
+        <TextInput 
+          value={email}
+          onChangeText={setEmail}
           placeholder="Email"
           placeholderTextColor="#8e8e93"
           style={styles.input}
@@ -44,16 +51,16 @@ const Signup = () => {
           style={styles.input}
         />
         <Pressable style={styles.login}>
-          <Text style={styles.loginText}>Entrar</Text>
+          <Text style={styles.loginText}>Cadastrar</Text>
         </Pressable>
 
-        <Pressable style={styles.signup}>
-          <Text style={styles.signupText}>Novo por aqui? Inscreva-se agora.</Text>
+        <Pressable style={styles.signup} onPress={() => router.push("/login")}>
+          <Text style={styles.signupText}>Ja tem uma conta associada? Clique aqui.</Text>
         </Pressable>
       </View>
       {/* LoginExtraInfo */}
       <View style={styles.Extra}>
-        <Text style={styles.signupText}>To use a Demo account Email: Demo@gmail.com Pass: DemoDemo</Text>
+        <Text style={styles.signupText}>To use a Demo account go to login and Email: Demo@gmail.com Pass: DemoDemo</Text>
       </View>
     </View>
   );
