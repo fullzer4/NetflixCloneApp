@@ -18,7 +18,7 @@ const Login = () => {
   }
 
   const sendLogin = async () => {
-    const response = await fetch('https://10.0.2.2:8080/login', {
+    const response = await fetch('http://10.0.2.2:8080/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -26,11 +26,11 @@ const Login = () => {
       body: JSON.stringify({
         email: email,
         password: password
-      })
+      }),
+      mode: 'cors'
     });
 
     if (response.ok) {
-      console.log("feito")
       router.push("/dashboard")
     } else {
       console.log("erro")

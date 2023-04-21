@@ -4,6 +4,7 @@ import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 
 const Signup = () => {
 
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
@@ -11,6 +12,28 @@ const Signup = () => {
 
   const sendHome = () => {
     router.push("/")
+  }
+
+  const sendSignup= async () => {
+    const response = await fetch('http://10.0.2.2:8080/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username : username,
+        email: email,
+        password: password
+      }),
+      mode: 'cors'
+    });
+
+    if (response.ok) {
+      router.push("/login")
+    } else {
+      console.log("erro")
+      return await response.text();
+    }
   }
 
   return (
@@ -30,8 +53,8 @@ const Signup = () => {
       {/* Forms */}
       <View style={styles.Forms}>
         <TextInput 
-          value={email}
-          onChangeText={setEmail}
+          value={username}
+          onChangeText={setUsername}
           placeholder="Username"
           placeholderTextColor="#8e8e93"
           style={styles.input}
@@ -50,7 +73,7 @@ const Signup = () => {
           placeholderTextColor="#8e8e93"
           style={styles.input}
         />
-        <Pressable style={styles.login}>
+        <Pressable style={styles.login} onPress={() => sendSignup()}>
           <Text style={styles.loginText}>Cadastrar</Text>
         </Pressable>
 
