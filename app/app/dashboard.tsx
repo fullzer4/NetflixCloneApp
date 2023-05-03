@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Carousel from 'react-native-snap-carousel';
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const apiKey = "8ec239cbb28a41952a8f67f1ed8bbb08";
@@ -128,7 +128,11 @@ const Dashboard = () => {
   }, [attempts]);
 
   if (isLoading) {
-    return <Text style={styles.loading}>Carregando...</Text>;
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.loading}>Carregando...</Text>
+      </View>
+    );
   }
 
   if (error) {
@@ -190,7 +194,12 @@ const Dashboard = () => {
   return (
     <View style={styles.container}>
       <View style={styles.banner}>
-
+        <Image source={require(
+          '../assets/backdrop.png',
+        )} style={styles.backdrop} />
+        <Pressable style={styles.watch}>
+          <Text style={styles.watchText}>Assistir</Text>
+        </Pressable>
       </View>
       <ScrollView>
         {!isLoading && renderPopulares()}
@@ -208,10 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#050505',
     paddingHorizontal: 20,
     paddingTop: 20,
-  },
-  banner: {
-    width: "100%",
-    height: "50%"
+    gap:45
   },
   title: {
     fontSize: 20,
@@ -247,12 +253,48 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  screen: {
+    flex: 1,
+    backgroundColor: '#050505',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   loading: {
     color: '#eee',
+    fontSize: 20
   },
   error: {
     color: '#792424',
   },
+  backdrop: {
+    width: "100%",
+    height: "100%",
+    borderTopRightRadius:20,
+    borderTopLeftRadius:20,
+  },
+  banner: {
+    width: "100%",
+    height: "50%",
+  },
+  watch:{
+    display:"flex",
+    backgroundColor: "#dbd7d7",
+    width: "50%",
+    height: "10%",
+    alignItems:"center",
+    justifyContent:"center",
+    textAlign: "center",
+    position: "absolute",
+    zIndex: 1,
+    top: 360,
+    left: "25%",
+    borderRadius: 5
+  },
+  watchText:{
+    color: '#000000',
+  }
 });
 
 export default Dashboard
