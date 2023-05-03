@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Carousel from 'react-native-snap-carousel';
 import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -288,7 +287,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     position: "absolute",
     zIndex: 1,
-    top: 360,
+    top: "95%",
     left: "25%",
     borderRadius: 5
   },
